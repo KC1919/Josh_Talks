@@ -1,7 +1,5 @@
 const express=require("express");
-const { count } = require("../models/Data");
 const Data=require("../models/Data");
-const mongoose=require("mongoose");
 
 const router=express.Router();
 
@@ -18,10 +16,10 @@ router.get("/",async (req,res)=>{
 
         if(result && skip<=count){
             skip+=limit;
-            res.render("search",{"videos":result});
+            return res.status(200).json({message:"Documents fetched", result:result});
         }
         else{
-            res.render("search",{"videos":[]});
+            return res.status(200).json({message:"Nothing found!", result:[]});
         }
     } catch (error) {
         return console.log(error);
@@ -30,16 +28,16 @@ router.get("/",async (req,res)=>{
                                                  
 router.post("/getData",async(req,res)=>{
     try {
-        const term=req.body.term;
+        let term=req.body.term; //extracting the user search term
         console.log(term);
-        const result=await Data.find( {$or:[{ title: { $regex: /${term}/,$options: 'i' }},{ description: { $regex: /${term}/,$options: 'i' } }]} );
+        //using the regex matching to search for all the documents in the database and fetch them
+        const result=await Data.find( {$or:[{ title:new RegExp(term,'i')},{ description:new RegExp(term,'i')}]} );
 
         if(result){
-            res.render("search",{"videos":result});
+            return res.status(200).json({message:"Documents Fetched", result:result});
         }else{
             console.log("No result found");
-            res.render("search",{"videos":[]});
-            // return res.json("No results found!");
+            return res.status(200).json({message:"Nothing found!", result:[]});
         }
     } catch (error) {
         console.log(error);
