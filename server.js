@@ -11,7 +11,10 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 
 
+const connectDB=require("./db");
+
 //Running the server
 app.listen(process.env.PORT || 3000, (req, res) => {
     console.log("Sever started");
+    connectDB();
 })
