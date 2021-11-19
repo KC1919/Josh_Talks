@@ -7,14 +7,18 @@ app.use(express.urlencoded({
     extended: false
 }))
 app.use(express.json());
-
 app.set('view engine', 'ejs');
 
 
+const router=require("./routes/getData");
+app.use("/",router);
+
 const connectDB=require("./db");
+const fetch=require("./routes/fetchData");
 
 //Running the server
-app.listen(process.env.PORT || 3000, (req, res) => {
+app.listen(process.env.PORT || 3000, async (req, res) => {
     console.log("Sever started");
-    connectDB();
-})
+    await connectDB();
+    // setInterval(fetch,10000);
+});
